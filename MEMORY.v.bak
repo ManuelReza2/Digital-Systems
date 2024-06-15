@@ -1,0 +1,33 @@
+module Memoria(
+  input wire clk,               // Señal de reloj
+  input wire rst,               // Señal de reinicio
+  input wire [3:0] direccion,   // Dirección de memoria (0-9)
+  input wire [7:0] dato_entrada, // Datos a escribir en la memoria
+  input wire leer,              // Señal de lectura
+  output wire [7:0] dato_salida  // Datos leídos desde la memoria
+);
+
+  reg [7:0] memoria [0:9];  // Memoria con 10 registros de 8 bits cada uno
+  integer i;
+
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      // Reiniciar la memoria a ceros en caso de señal de reinicio
+      integer i;
+      for (i = 0; i < 10; i = i + 1) begin
+        memoria[i] <= 8'b0;
+      end
+    end else begin
+      // Escribir en la memoria si la señal de escritura está activa
+      if (!leer) begin
+        memoria[direccion] <= dato_entrada;
+      end
+    end
+  end
+
+  // Leer desde la memoria
+  assign dato_salida = (leer) ? memoria[direccion] : 8'b0;
+
+endmodule
+
+

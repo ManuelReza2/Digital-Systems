@@ -1,0 +1,43 @@
+module Display7Segment(
+  input wire clk,              // Señal de reloj
+  input wire rst,              // Señal de reinicio
+  input wire [7:0] resultado,  // Resultado del módulo Sumador
+  output reg [6:0] display      // Salida para el display de 7 segmentos
+);
+
+  reg [3:0] digitos [0:9];  // Representación de los dígitos de 0 a 9 en formato de 7 segmentos
+
+  // Definición de los dígitos de 0 a 9 en formato de 7 segmentos
+  // (La asignación de bits para cada segmento dependerá de tu configuración específica)
+  initial begin
+    digitos[0] = 7'b111_1110;
+    digitos[1] = 7'b011_0000;
+    digitos[2] = 7'b110_1101;
+    digitos[3] = 7'b111_1001;
+    digitos[4] = 7'b011_0011;
+    digitos[5] = 7'b101_1011;
+    digitos[6] = 7'b101_1111;
+    digitos[7] = 7'b111_0000;
+    digitos[8] = 7'b111_1111;
+    digitos[9] = 7'b111_1011;
+  end
+
+  reg [3:0] contador;  // Contador para seleccionar el dígito actual
+
+  always @(posedge clk or posedge rst) begin
+    if (rst) begin
+      // Reiniciar el contador y el display en caso de reinicio
+      contador <= 4'b0000;
+      display <= digitos[0];
+    end else begin
+      // Actualizar el display con el resultado
+      if (contador < 4) begin
+        display <= digitos[resultado[4*contador +: 4]];
+        contador <= contador + 1;
+      end else begin
+        contador <= 4'b0000;
+      end
+    end
+  end
+
+endmodule
